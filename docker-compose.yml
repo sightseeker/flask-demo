@@ -4,6 +4,6 @@ services:
     build: .
     image: sightseeker/flask-demo
     ports:
-      - 5000:5000
+      - 5001:5001
     volumes:
       - "./script:/flask-demo"
