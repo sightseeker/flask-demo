@@ -12,23 +12,6 @@ consumes:
 produces:
   - application/json
 paths:
-  /user:
-    post:
-      tags:
-        - user
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: app.post_user
-      parameters:
-        - in: body
-          name: user
-          description: Created user object
-          required: true
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        default:
-          description: successful operation
   '/user/{id}':
     get:
       tags:

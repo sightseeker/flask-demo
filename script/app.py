@@ -1,4 +1,5 @@
 import connexion
+import datetime
 import logging
 
 from connexion import NoContent
@@ -9,30 +10,29 @@ def get_user(id):
     logging.info(id)
     logging.info(USERS)
     user = USERS.get(id)
-    logging.info(user)
+    logging.info(user['created'])
     # logging
     return user or (NoContent, 404)
 
-def post_user(user):
-    id = user['id']
-    exists = id in USERS
-    if exists:
-        logging.info('Duplicate existed id : %s', id)
-        USERS[id].update(user)
-        return NoContent, 409
-    logging.info('Create user id : %s', id)
-    USERS[id] = user
-    logging.info(USERS[id])
-    return USERS[id], 200
-
 def put_user(id, user):
-    return NoContent, 204
+    exists = id in USERS
+    user['id'] = id
+    if exists:
+        logging.info('Updating user %s..', id)
+        user['updated'] = datetime.datetime.utcnow()
+        USERS[id].update(user)
+    else:
+        logging.info('Creating user %s..', id)
+        user['created'] = datetime.datetime.utcnow()
+        USERS[id] = user
+    return NoContent, (200 if exists else 201)
 
 def delete_user(id):
     exists = id in USERS
     if exists:
-        return NoContent, 404
-    return NoContent, 204
+        del USERS[id]
+        return NoContent, 204
+    return NoContent, 404
 
 logging.basicConfig(level=logging.INFO)
 app = connexion.App(__name__, specification_dir='./swagger/')
